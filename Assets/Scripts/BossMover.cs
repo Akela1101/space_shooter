@@ -14,7 +14,7 @@ public class BossMover : BoundedMover
 		base.Start();
 
 		isMoving = true;
-		boundaryCenterZ = (boundary.zMax - boundary.zMin) / 2;
+		boundaryCenterZ = (boundary.zMax + boundary.zMin) / 2;
 
 		StartCoroutine(Evade());
 	}
@@ -34,21 +34,24 @@ public class BossMover : BoundedMover
 
 	protected override void FixedUpdate()
 	{
-		base.FixedUpdate();
-
-		float velocityX = Mathf.MoveTowards(rigidbody.velocity.x, direction.x, Time.deltaTime * 10);
-		float velocityZ;
+		float velocityX, velocityZ;
 
 		if (isMoving)
 		{
-			if (rigidbody.transform.position.z > boundaryCenterZ)
+			// move down till the center of boss area
+			if (rigidbody.transform.position.z < boundaryCenterZ)
 			{
 				isMoving = false;
 			}
+			velocityX = rigidbody.velocity.x;
 			velocityZ = rigidbody.velocity.z;
 		}
 		else
 		{
+			// when moving is finished, boss can be bound to its area
+			base.FixedUpdate();
+
+			velocityX = Mathf.MoveTowards(rigidbody.velocity.x, direction.x, Time.deltaTime * 10);
 			velocityZ = Mathf.MoveTowards(rigidbody.velocity.z, direction.y, Time.deltaTime * 5);
 		}
 		

@@ -23,6 +23,8 @@ public class EnemyController : HazardController
 	
 	void Fire()
 	{
+		if (gameObject == null) return; // asynchronous function should check it probably
+
 		for (int i = 0; i < shotSpawns.Length; ++i)
 		{
 			Instantiate(shot, shotSpawns[i].position, shotSpawns[i].rotation);

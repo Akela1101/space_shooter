@@ -31,7 +31,6 @@ public class GameController : MonoBehaviour
 	int score;
 	bool restart;
 	bool gameover;
-	bool gameclear;
 	int maxWeaponId;
 
 	List<EntityController> currentHazardControllers;
@@ -43,7 +42,6 @@ public class GameController : MonoBehaviour
 		score = 0;
 		restart = false;
 		gameover = false;
-		gameclear = false;
 
 		maxWeaponId = weapons.Length - 1;
 		Weapon initialWeapon = weapons[GetWeaponId()];
@@ -76,8 +74,6 @@ public class GameController : MonoBehaviour
 		{
 			yield return new WaitForSeconds(waveWait);
 
-			if (NewGame()) break;
-
 			HazardWave wave = hazardWaves[waveCount];
 			GameObject[] hazards = wave.hazards;
 
@@ -93,39 +89,36 @@ public class GameController : MonoBehaviour
 
 				hazard = Instantiate(hazard, spawnPos, spawnRot);
 				currentHazardControllers.Add(hazard.GetComponent<EntityController>());
+
+				if (gameover) goto exit_loop;
 			}
 		}
+		exit_loop:
 
-		yield return new WaitUntil(GameClear);
+		yield return new WaitUntil(GameEnd);
 	}
 
-	bool GameClear()
+	bool GameEnd()
 	{
-		foreach (EntityController hazardController in currentHazardControllers)
+		if (!gameover)
 		{
-			if (!hazardController.IsDead())
+			// Check if all hazards of the last wave are destroyed
+			foreach (EntityController hazardController in currentHazardControllers)
 			{
-				return false;
+				if (!hazardController.IsDead())
+				{
+					return false;
+				}
 			}
+
+			centerText.text = "Win!";
 		}
 
-		gameclear = true;
-		centerText.text = "Win!";
-		NewGame();
+		restartText.text = "Press 'R'\n for restart";
+		restart = true;
 		return true;
 	}
-
-	bool NewGame()
-	{
-		if (gameover || gameclear)
-		{
-			restartText.text = "Press 'R' for restart";
-			restart = true;
-			return true;
-		}
-		return false;
-	}
-	
+		
 	public void ChangeScore(int scoreDelta)
 	{
 		int weaponId = GetWeaponId();
