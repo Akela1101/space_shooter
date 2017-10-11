@@ -6,7 +6,7 @@ public class Mover : MonoBehaviour
 {
 	public float speed;
 
-	protected new Rigidbody rigidbody;
+	protected Rigidbody rigidbody;
 
 	protected virtual void Start ()
 	{

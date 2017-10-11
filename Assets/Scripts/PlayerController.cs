@@ -13,7 +13,7 @@ public class PlayerController : EntityController
 	public Transform shotSpawn;
 
 
-	new Rigidbody rigidbody;
+	Rigidbody rigidbody;
 	float nextFire = 0;
 	Weapon weapon;
 
