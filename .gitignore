@@ -11,6 +11,7 @@
 *.userprefs
 
 #####
+/build/
 Library/
 Temp/
 .vs/
